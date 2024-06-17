@@ -53,10 +53,44 @@ async function sendTaskReminder(recipientName, taskName, taskLink) {
   console.log("Message sent: %s", info.messageId);
 }
 
-// Example usage
-const recipientName = "John Doe";
-const taskName = "Important Report";
-const taskLink = "https://your-app.com/tasks/123";
-sendTaskReminder(recipientName, taskName, taskLink);
+// // Example usage
+// const recipientName = "John Doe";
+// const taskName = "Important Report";
+// const taskLink = "https://your-app.com/tasks/123";
+// sendTaskReminder(recipientName, taskName, taskLink);
 
-main().catch(console.error); // Assuming this is for error handling in your actual code
+// main().catch(console.error); // Assuming this is for error handling in your actual code
+
+// const mongoose = require("mongoose");
+
+// // User Schema
+// const userSchema = new mongoose.Schema({
+//   username: { type: String, required: true, unique: true },
+//   email: { type: String, required: true, unique: true },
+// });
+
+// // Department Schema (with optional embedded user IDs)
+// const departmentSchema = new mongoose.Schema({
+//   name: { type: String, required: true, unique: true },
+//   description: { type: String },
+//   users: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }], // Optional embedded user IDs
+// });
+
+// // Task Schema (referencing User and Department)
+// const taskSchema = new mongoose.Schema({
+//   title: { type: String, required: true },
+//   description: { type: String },
+//   due_date: { type: Date },
+//   departmentId: {
+//     type: mongoose.Schema.Types.ObjectId,
+//     ref: "Department",
+//     required: true,
+//   },
+//   userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+// });
+
+// module.exports = {
+//   User: mongoose.model("User", userSchema),
+//   Department: mongoose.model("Department", departmentSchema),
+//   Task: mongoose.model("Task", taskSchema),
+// };

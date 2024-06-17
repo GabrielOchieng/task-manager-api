@@ -2,9 +2,10 @@ import mongoose from "mongoose";
 import asyncHandler from "express-async-handler";
 import User from "../models/userModel.js";
 import jwt from "jsonwebtoken";
+import Department from "../models/departmentModel.js";
 
 const registerUser = asyncHandler(async (req, res) => {
-  const { name, username, email, password, department, tasks } = req.body;
+  const { name, username, email, password } = req.body;
 
   const userExists = await User.findOne({ email });
   if (userExists) {
@@ -18,8 +19,6 @@ const registerUser = asyncHandler(async (req, res) => {
     email,
     password,
     role: "user",
-    department,
-    tasks,
   });
 
   if (user) {
@@ -74,108 +73,68 @@ const logOutUser = asyncHandler(async (req, res) => {
 
   res.status(200).json({ message: "Logout successful" });
 });
-const getUserProfile = asyncHandler(async (req, res) => {
-  const user = {
-    _id: req.user._id,
-    name: req.user.name,
-    email: req.user.email,
-  };
-  console.log(user);
+
+// const getAllUsers = asyncHandler(async (req, res) => {
+//   const users = await User.find().select("-password"); // Exclude password from response
+//   res.status(200).json(users);
+// });
+
+const getAllUsers = asyncHandler(async (req, res) => {
+  const users = await User.find().select("-password"); // Exclude password
+
+  // Loop through users and fetch departments (if needed)
+  const usersWithDepartments = await Promise.all(
+    users.map(async (user) => {
+      const department = await Department.findById(user.department);
+      return { ...user.toObject(), department }; // Add department to user object
+    })
+  );
+
+  res.status(200).json(usersWithDepartments);
+});
+
+const updateUser = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { name, username, email, role } = req.body;
+
+  // Find user by ID and update relevant fields
+  const user = await User.findByIdAndUpdate(
+    id,
+    {
+      name,
+      username,
+      email,
+      role,
+    },
+    { new: true, runValidators: true }
+  ); // Return updated user and run validation
+
+  if (!user) {
+    res.status(404);
+    throw new Error("User not found");
+  }
 
   res.status(200).json(user);
 });
 
-const updateUserProfile = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.user._id);
+const deleteUser = asyncHandler(async (req, res) => {
+  const { id } = req.params;
 
-  if (user) {
-    user.name = req.body.name || user.name;
-    user.email = req.body.email || user.email;
+  const user = await User.findByIdAndDelete(id);
 
-    if (req.body.password) {
-      user.password = req.body.password;
-    }
-    const updatedUser = await user.save();
-    res.status(200).json({
-      _id: updatedUser._id,
-      name: updatedUser.name,
-      email: updatedUser.email,
-    });
-    console.log(updatedUser);
-  } else {
+  if (!user) {
     res.status(404);
     throw new Error("User not found");
   }
-});
 
-const getAllUsers = asyncHandler(async (req, res) => {
-  try {
-    const users = await User.find().populate("department"); // Populate with all department fields
-    res.status(200).json(users);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server Error" });
-  }
-});
-
-const editUser = asyncHandler(async (req, res) => {
-  const userId = req.params.id;
-  const { name, email, role, department } = req.body; // Get specific fields to update, including departmentId
-  console.log("Usercontrollerdept;", department);
-  try {
-    console.log("userid", userId);
-
-    const user = await User.findById(userId);
-
-    if (user) {
-      // Update user fields
-      user.name = name || user.name;
-      user.email = email || user.email;
-      user.role = role || user.role;
-      user.department = department || user.department;
-
-      // // Update department if departmentId is provided
-      // if (departmentId) {
-      //   user.department = departmentId;
-      // }
-
-      const updatedUser = await user.save();
-      res.status(200).json(updatedUser);
-    } else {
-      res.status(404);
-      throw new Error("User not found");
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server Error" });
-  }
-});
-
-const deleteUser = asyncHandler(async (req, res) => {
-  const userId = req.params.id; // Get user ID from URL parameter
-
-  try {
-    const deletedUser = await User.findByIdAndDelete(userId);
-
-    if (deletedUser) {
-      res.status(200).json({ message: "User deleted successfully" });
-    } else {
-      res.status(404);
-      throw new Error("User not found");
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server Error" });
-  }
+  res.status(200).json({ message: "User deleted successfully" });
 });
 
 export {
   loginUser,
   registerUser,
   logOutUser,
-  getUserProfile,
-  updateUserProfile,
   getAllUsers,
-  editUser,
+  updateUser,
   deleteUser,
 };

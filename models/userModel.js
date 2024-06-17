@@ -1,13 +1,6 @@
 // import mongoose from "mongoose";
 // import bcrypt from "bcryptjs";
-
-// // const roleSchema = new mongoose.Schema({
-// //   name: {
-// //     type: String,
-// //     required: true,
-// //     enum: ["user", "manager", "admin"], // Allowed roles
-// //   },
-// // });
+// import Department from "./departmentModel.js";
 
 // const userSchema = mongoose.Schema(
 //   {
@@ -44,7 +37,6 @@
 //     department: {
 //       type: mongoose.Schema.Types.ObjectId,
 //       ref: "Department",
-//       default: new mongoose.Types.ObjectId("666d2cc5916e4764ada9fdab"), // Replace with actual ObjectId
 //     },
 //   },
 //   {
@@ -53,18 +45,29 @@
 // );
 
 // userSchema.pre("save", async function (next) {
-//   if (!this.isModified("password")) {
-//     next();
+//   if (!this.isModified("password") && !this.isModified("department")) {
+//     return next(); // Skip if not password or department change
 //   }
 
 //   const salt = await bcrypt.genSalt(10);
 //   this.password = await bcrypt.hash(this.password, salt);
+
+//   // If department is being updated
+//   if (this.isModified("department")) {
+//     // Remove user from previous department (optional)
+//     if (this.department) {
+//       await Department.findByIdAndUpdate(this.department, {
+//         $pull: { users: this._id },
+//       });
+//     }
+//   }
+
+//   next();
 // });
 
 // userSchema.methods.matchPassword = async function (enteredPassword) {
 //   return await bcrypt.compare(enteredPassword, this.password);
 // };
-
 // const User = mongoose.model("User", userSchema);
 
 // export default User;
@@ -89,6 +92,7 @@ const userSchema = mongoose.Schema(
       required: true,
       unique: true,
     },
+
     role: {
       type: String,
       enum: ["user", "manager", "admin"], // Allowed roles
@@ -98,17 +102,6 @@ const userSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-
-    tasks: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Task",
-      },
-    ],
-    department: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Department",
-    },
   },
   {
     timestamps: true,
@@ -116,22 +109,12 @@ const userSchema = mongoose.Schema(
 );
 
 userSchema.pre("save", async function (next) {
-  if (!this.isModified("password") && !this.isModified("department")) {
-    return next(); // Skip if not password or department change
+  if (!this.isModified("password")) {
+    return next(); // Skip if not password change
   }
 
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
-
-  // If department is being updated
-  if (this.isModified("department")) {
-    // Remove user from previous department (optional)
-    if (this.department) {
-      await Department.findByIdAndUpdate(this.department, {
-        $pull: { users: this._id },
-      });
-    }
-  }
 
   next();
 });
@@ -139,6 +122,7 @@ userSchema.pre("save", async function (next) {
 userSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
+
 const User = mongoose.model("User", userSchema);
 
 export default User;

@@ -27,11 +27,9 @@ import {
   loginUser,
   registerUser,
   logOutUser,
-  getUserProfile,
-  updateUserProfile,
   getAllUsers,
   deleteUser,
-  editUser,
+  updateUser,
 } from "../controllers/userController.js";
 import { authorize, protect } from "../middlewares/authMiddleware.js";
 
@@ -44,16 +42,10 @@ router.post("/logout", logOutUser);
 // Get all users (protected, accessible only by authorized users)
 router.get("/", protect, authorize(["admin", "manager"]), getAllUsers);
 
-// User profile routes (protected)
-router
-  .route("/profile")
-  .get(protect, getUserProfile)
-  .put(protect, updateUserProfile);
-
 // Delete user (protected, accessible only by authorized users)
 router.delete("/:id", protect, authorize(["admin", "manager"]), deleteUser);
 
 // Edit user (protected, accessible only by authorized users)
-router.put("/:id", protect, authorize(["admin", "manager"]), editUser);
+router.put("/:id", protect, authorize(["admin", "manager"]), updateUser);
 
 export default router;

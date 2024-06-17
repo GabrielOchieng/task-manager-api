@@ -9,6 +9,7 @@ import {
   deleteDepartment,
   addUserToDepartment,
   removeUserFromDepartment,
+  getDepartmentTasks,
 } from "../controllers/departmentController.js";
 import { protect, authorize } from "../middlewares/authMiddleware.js"; // Assuming middleware is defined
 
@@ -16,7 +17,18 @@ import { protect, authorize } from "../middlewares/authMiddleware.js"; // Assumi
 router.get("/", protect, authorize(["manager", "admin"]), getDepartments);
 
 // Get a specific department by ID (Manager only)
-router.get("/:id", protect, authorize(["manager"]), getDepartmentById);
+router.get(
+  "/:id",
+  // protect,
+  // authorize(["manager", "admin"]),
+  getDepartmentById
+);
+router.get(
+  "/:id/tasks",
+  protect,
+  authorize(["manager", "admin"]),
+  getDepartmentTasks
+);
 
 // Create a new department (Manager only)
 router.post("/", protect, authorize(["manager", "admin"]), createDepartment);
