@@ -63,18 +63,35 @@ const getDepartmentDetails = asyncHandler(async (req, res) => {
   }
 });
 
-// Get department by ID
+// // Get department by ID
+// const getDepartmentById = asyncHandler(async (req, res) => {
+//   const { id } = req.params;
+
+//   const department = await Department.findById(id).populate("users"); // Optional: populate users
+
+//   if (!department) {
+//     res.status(404);
+//     throw new Error("Department not found");
+//   }
+
+//   res.status(200).json(department);
+// });
+
 const getDepartmentById = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
-  const department = await Department.findById(id).populate("users"); // Optional: populate users
+  try {
+    const department = await Department.findById(id).populate("users"); // Optional: populate users
 
-  if (!department) {
-    res.status(404);
-    throw new Error("Department not found");
+    if (!department) {
+      return res.status(404).json({ message: "Department not found" });
+    }
+
+    res.status(200).json(department);
+  } catch (error) {
+    console.error(error); // Log the error for debugging purposes
+    res.status(500).json({ message: "Internal Server Error" });
   }
-
-  res.status(200).json(department);
 });
 
 // Create department
