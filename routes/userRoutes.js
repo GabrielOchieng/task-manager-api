@@ -1,27 +1,3 @@
-// import express from "express";
-// import {
-//   loginUser,
-//   registerUser,
-//   logOutUser,
-//   getUserProfile,
-//   updateUserProfile,
-//   getAllUsers,
-// } from "../controllers/userController.js";
-// import { authorize, protect } from "../middlewares/authMiddleware.js";
-
-// const router = express.Router();
-
-// router.post("/register", registerUser);
-// router.post("/login", loginUser);
-// router.post("/logout", logOutUser);
-// router.get("/", getAllUsers);
-// router
-//   .route("/profile")
-//   .get(protect, getUserProfile)
-//   .put(protect, authorize(["manager"]), updateUserProfile);
-
-// export default router;
-
 import express from "express";
 import {
   loginUser,
