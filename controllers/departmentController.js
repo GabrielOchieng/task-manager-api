@@ -89,7 +89,6 @@ const getDepartmentById = asyncHandler(async (req, res) => {
 
     res.status(200).json(department);
   } catch (error) {
-    console.error(error); // Log the error for debugging purposes
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
