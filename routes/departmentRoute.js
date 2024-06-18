@@ -34,7 +34,11 @@ router.get(
 router.post("/", protect, authorize(["manager", "admin"]), createDepartment);
 
 // Update a department by ID (Manager only)
-router.put("/:id", protect, authorize(["manager"]), updateDepartment);
+router.put(
+  "/:id",
+  //  protect, authorize(["manager"]),
+  updateDepartment
+);
 
 // Delete a department by ID (Manager only)
 router.delete("/:id", protect, authorize(["manager"]), deleteDepartment);

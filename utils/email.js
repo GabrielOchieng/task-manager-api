@@ -33,5 +33,3 @@ const recipientName = "John Doe";
 const taskName = "Important Report";
 
 sendTaskReminder(recipientName, taskName);
-
-// main().catch(console.error); // Assuming this is for error handling in your actual code

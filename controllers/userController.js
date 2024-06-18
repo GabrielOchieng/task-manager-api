@@ -4,33 +4,68 @@ import User from "../models/userModel.js";
 import jwt from "jsonwebtoken";
 import Department from "../models/departmentModel.js";
 
+// const registerUser = asyncHandler(async (req, res) => {
+//   const { name, username, email, password } = req.body;
+
+//   const userExists = await User.findOne({ email });
+//   if (userExists) {
+//     res.status(400);
+//     throw new Error("User already exists");
+//   }
+
+//   const user = await User.create({
+//     name,
+//     username,
+//     email,
+//     password,
+//     role: "user",
+//   });
+
+//   if (user) {
+//     // Generate JWT token (replace with your secret key)
+//     const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
+//       expiresIn: "1d", // Set expiry time for the token (e.g., 1 day)
+//     });
+
+//     res.status(200).json({ token, user }); // Send back token and sanitized user info
+//   } else {
+//     res.status(400);
+//     throw new Error("Invalid user data");
+//   }
+// });
+
 const registerUser = asyncHandler(async (req, res) => {
   const { name, username, email, password } = req.body;
 
-  const userExists = await User.findOne({ email });
-  if (userExists) {
-    res.status(400);
-    throw new Error("User already exists");
-  }
+  try {
+    // Check for existing user
+    const userExists = await User.findOne({ email });
+    if (userExists) {
+      throw new Error("User already exists"); // Or a more descriptive error message
+    }
 
-  const user = await User.create({
-    name,
-    username,
-    email,
-    password,
-    role: "user",
-  });
-
-  if (user) {
-    // Generate JWT token (replace with your secret key)
-    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "1d", // Set expiry time for the token (e.g., 1 day)
+    // Create user
+    const user = await User.create({
+      name,
+      username,
+      email,
+      password,
+      role: "user",
     });
 
-    res.status(200).json({ token, user }); // Send back token and sanitized user info
-  } else {
-    res.status(400);
-    throw new Error("Invalid user data");
+    if (user) {
+      // Generate JWT token
+      const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
+        expiresIn: "1d", // Set expiry time for the token (e.g., 1 day)
+      });
+
+      res.status(201).json({ token, user }); // Send back token and sanitized user info (201 for created resource)
+    } else {
+      throw new Error("Failed to create user"); // Or a more specific error message
+    }
+  } catch (error) {
+    console.error(error.message); // Log the error for debugging
+    res.status(400).json({ message: error.message }); // Send back a user-friendly error message
   }
 });
 

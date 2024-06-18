@@ -253,13 +253,13 @@ const createDepartment = asyncHandler(async (req, res) => {
 // Update department
 const updateDepartment = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { name, description, users = [] } = req.body; // Allow optional user IDs for update
+  const { name, users = [] } = req.body; // Allow optional user IDs for update
 
   // Validate data and ID
 
   const department = await Department.findByIdAndUpdate(
     id,
-    { name, description, users }, // Update users array if provided
+    { name, users }, // Update users array if provided
     { new: true }
   );
 
