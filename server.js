@@ -33,8 +33,18 @@ app.get("/", (req, res) => {
 app.use(notFound);
 app.use(errorHandler);
 
-const job = schedule.scheduleJob("8 * * * *", async () => {
-  // Runs once every day
+// const job = schedule.scheduleJob("8 * * * *", async () => {
+//   // Runs once every day
+//   try {
+//     await sendUpcomingTaskNotifications();
+//     console.log("Sent upcoming task notifications");
+//   } catch (error) {
+//     console.error("Error sending upcoming task notifications:", error);
+//   }
+// });
+
+const job = schedule.scheduleJob("0 8 * * *", async () => {
+  // Runs once a day at 8:00 AM
   try {
     await sendUpcomingTaskNotifications();
     console.log("Sent upcoming task notifications");
