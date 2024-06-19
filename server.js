@@ -9,8 +9,8 @@ import departmentRoutes from "./routes/departmentRoute.js";
 import connectDB from "./config/db.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-// import schedule from "node-schedule";
-// import { sendUpcomingTaskNotifications } from "./utils/notification.js";
+import schedule from "node-schedule";
+import { sendUpcomingTaskNotifications } from "./utils/notification.js";
 
 const port = process.env.PORT || 5000;
 
@@ -33,14 +33,14 @@ app.get("/", (req, res) => {
 app.use(notFound);
 app.use(errorHandler);
 
-// const job = schedule.scheduleJob("0 * * * *", async () => {
-//   // Runs every hour
-//   try {
-//     await sendUpcomingTaskNotifications();
-//     console.log("Sent upcoming task notifications");
-//   } catch (error) {
-//     console.error("Error sending upcoming task notifications:", error);
-//   }
-// });
+const job = schedule.scheduleJob("8 * * * *", async () => {
+  // Runs once every day
+  try {
+    await sendUpcomingTaskNotifications();
+    console.log("Sent upcoming task notifications");
+  } catch (error) {
+    console.error("Error sending upcoming task notifications:", error);
+  }
+});
 
 app.listen(port, () => console.log(`Server started on port ${port}`));
