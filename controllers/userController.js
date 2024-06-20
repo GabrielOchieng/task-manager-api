@@ -26,7 +26,7 @@ const registerUser = asyncHandler(async (req, res) => {
     if (user) {
       // Generate JWT token
       const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
-        expiresIn: "1d", // Set expiry time for the token (e.g., 1 day)
+        expiresIn: "30d", // Set expiry time for the token (e.g., 1 day)
       });
 
       res.status(201).json({ token, user }); // Send back token and sanitized user info (201 for created resource)
