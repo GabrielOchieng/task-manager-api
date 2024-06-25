@@ -28,7 +28,12 @@ router.get(
 router.post("/", protect, authorize(["manager", "admin"]), createTask);
 
 // Update a task (Manager or admin)
-router.put("/:id", protect, authorize(["manager", "admin"]), updateTask);
+router.put(
+  "/:id",
+  // protect,
+  // authorize(["manager", "admin"]),
+  updateTask
+);
 
 // Delete a task (Manager only)
 router.delete("/:id", protect, authorize(["manager", "admin"]), deleteTask);
