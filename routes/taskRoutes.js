@@ -18,22 +18,13 @@ router.get("/", getTasks);
 router.get("/:id", protect, getTaskById);
 
 // Get tasks of a specific user
-router.get(
-  "/:userId/tasks",
-  //  protect,
-  getUserTasks
-);
+router.get("/:userId/tasks", protect, getUserTasks);
 
 // Create a new task (Manager only)
 router.post("/", protect, authorize(["manager", "admin"]), createTask);
 
 // Update a task (Manager or admin)
-router.put(
-  "/:id",
-  // protect,
-  // authorize(["manager", "admin"]),
-  updateTask
-);
+router.put("/:id", protect, updateTask);
 
 // Delete a task (Manager only)
 router.delete("/:id", protect, authorize(["manager", "admin"]), deleteTask);

@@ -17,11 +17,7 @@ import { protect, authorize } from "../middlewares/authMiddleware.js"; // Assumi
 router.get("/", protect, authorize(["manager", "admin"]), getDepartments);
 
 // Get a specific department by ID (Manager only)
-router.get(
-  "/:id",
-  // protect, authorize(["manager", "admin"]),
-  getDepartmentById
-);
+router.get("/:id", protect, authorize(["manager", "admin"]), getDepartmentById);
 
 router.get(
   "/:id/tasks",
@@ -34,7 +30,7 @@ router.get(
 router.post("/", protect, authorize(["manager", "admin"]), createDepartment);
 
 // Update a department by ID (Manager only)
-router.put("/:id", protect, authorize(["manager"]), updateDepartment);
+router.put("/:id", protect, authorize(["manager", "admin"]), updateDepartment);
 
 // Delete a department by ID (Manager only)
 router.delete("/:id", protect, authorize(["manager"]), deleteDepartment);
