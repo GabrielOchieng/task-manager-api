@@ -95,12 +95,14 @@ const updateTask = asyncHandler(async (req, res) => {
       // });
 
       const updatedTask = await task.save();
+      // console.log("edditted", updatedTask);
       res.status(200).json(updatedTask);
     } else {
       res.status(404);
       throw new Error("Task not found");
     }
   } catch (error) {
+    // console.log(error);
     res.status(500).json({ message: "Server Error" });
   }
 });
